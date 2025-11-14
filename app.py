@@ -31,7 +31,22 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///moringa_orders.db')
+# Old Code By Huzaifa Sir app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///moringa_orders.db')
+
+# THIS IS THE NEW BY NIKHIL, GOOD CODE
+
+# Get the database URL from Railway's environment variables
+db_url = os.environ.get('MYSQL_URL')
+
+# This fix ensures SQLAlchemy (with PyMySQL) can understand Railway's URL
+if db_url and db_url.startswith("mysql://"):
+    db_url = db_url.replace("mysql://", "mysql+pymysql://", 1)
+
+# Set the database URI for SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+
+#Till Here By Nikhil
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Enhanced session configuration for security
